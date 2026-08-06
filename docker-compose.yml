@@ -7,6 +7,9 @@ services:
     environment:
       MCP_HOST: 0.0.0.0
       MCP_PORT: 8000
+      MCP_AUTH_TOKEN: ${MCP_AUTH_TOKEN:?set MCP_AUTH_TOKEN in .env}
+      MCP_AUTH_DISABLED: ${MCP_AUTH_DISABLED:-0}
+      MCP_PUBLIC_URL: ${MCP_PUBLIC_URL:-http://localhost:8000/mcp}
     restart: unless-stopped
     develop:
       watch:

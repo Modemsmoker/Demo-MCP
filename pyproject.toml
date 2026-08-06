@@ -1,0 +1,23 @@
+[project]
+name = "demo-mcp"
+version = "0.0.0"          # PSR owns this from here on
+description = "A demo Model Context Protocol server."
+requires-python = ">=3.12"
+
+[tool.semantic_release]
+tag_format = "v{version}"
+version_toml = ["pyproject.toml:project.version"]
+version_variables = ["server.py:__version__"]
+commit_message = "chore(release): v{version} [skip ci]"
+allow_zero_version = true
+major_on_zero = false
+
+[tool.semantic_release.commit_parser_options]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf"]
+parse_squash_commits = true
+ignore_merge_commits = true
+
+[tool.semantic_release.changelog.default_templates]
+changelog_file = "CHANGELOG.md"
+output_format = "md"
