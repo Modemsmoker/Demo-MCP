@@ -4,7 +4,7 @@ Runs over streamable HTTP so it can be hosted in a container and reached by any
 MCP client at http://<host>:<port>/mcp
 """
 
-__version__ = "0.0.0"
+__version__ = "0.1.0"
 
 import hmac
 import logging
