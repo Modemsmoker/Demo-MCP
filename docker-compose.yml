@@ -1,0 +1,15 @@
+services:
+  demo-mcp:
+    build: .
+    container_name: demo-mcp
+    ports:
+      - "8000:8000"
+    environment:
+      MCP_HOST: 0.0.0.0
+      MCP_PORT: 8000
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./server.py
+          target: /app/server.py
