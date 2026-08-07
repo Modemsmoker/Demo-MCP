@@ -259,3 +259,8 @@ open in this spec:
   the affirmative, but scoped rather than blanket. `HttpClient` still does ETag/`If-None-Match`
   revalidation for every GitHub call, so a `304` never re-downloads a payload, but the other
   six tools otherwise hit the HTTP layer on every call.
+- **Toy tools removed post-launch.** Once these GitHub tools shipped, `add` and `save_note`
+  (plus `server_time`, `list_notes`, the `note://{title}` resource, and the `summarize_note`
+  prompt) were removed as no longer needed to prove the plumbing. `whoami` was kept — it is
+  the only in-band way to verify a bearer token authenticated. The server's tool surface is
+  now `whoami` plus the seven `github_*` tools described here.

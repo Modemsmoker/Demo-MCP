@@ -1,5 +1,11 @@
 # Demo-MCP — Implementation Plan
 
+> **Superseded.** This is the historical record of the original build. The tool surface it
+> describes (`add`, `server_time`, `save_note`, `list_notes`, the `note://{title}` resource,
+> the `summarize_note` prompt) has since been removed; only `whoami` and the `github_*` tools
+> (see `docs/GITHUB_API.md`) remain live. Left unchanged below as a record of what was built,
+> not as current reference documentation.
+
 ## Context
 
 `Demo-MCP` is a near-empty repo. The goal is a basic Python MCP server that runs in a Docker container via Docker Compose, so a separate Claude Code session can connect to it over the network and exercise real tools, resources, and prompts.

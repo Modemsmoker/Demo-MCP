@@ -164,7 +164,7 @@ The `Dockerfile` healthcheck opens a TCP socket and does not speak HTTP, so it i
 4. `curl` with a deliberately wrong bearer token → `401`.
 5. Unset the token and run the container → it exits at startup with the `RuntimeError`, not silently open.
 6. `make unregister && make register`, then from another Claude Code session: `/mcp` shows the server connected, and `mcp__demo-mcp__whoami` returns `demo-client (scopes: demo)` — which is only reachable if the header authenticated.
-7. Re-run the earlier end-to-end check (`save_note` → `list_notes` → read `note://<title>`) to confirm auth did not break tools or resources.
+7. Re-run `mcp__demo-mcp__github_repo_overview` (also what `make health-github` exercises, e.g. on `octocat/Hello-World`) to confirm auth did not break the tools. This no longer proves in-process state or resources round-trip, because the server has neither.
 
 ## Constraints and follow-ups
 

@@ -6,12 +6,7 @@ A minimal Model Context Protocol server in Python, served over streamable HTTP f
 
 | Kind | Name | Purpose |
 | --- | --- | --- |
-| tool | `add(a, b)` | adds two numbers |
-| tool | `server_time()` | UTC time from inside the container |
-| tool | `save_note(title, body)` | writes to an in-memory store |
-| tool | `list_notes()` | lists saved note titles |
-| resource | `note://{title}` | reads a saved note |
-| prompt | `summarize_note(title)` | prompt template over a note |
+| tool | `whoami()` | reports which client authenticated and what scopes it holds |
 | tool | `github_repo_overview(repo)` | compact repo summary: stars, language, latest release, open issue/PR counts |
 | tool | `github_search(query, type, repo, state, author, limit, cursor)` | search GitHub issues, pull requests, or repositories |
 | tool | `github_get_issue(repo, number, include_comments, comment_limit)` | full detail of one issue, comments opt-in |
@@ -20,7 +15,8 @@ A minimal Model Context Protocol server in Python, served over streamable HTTP f
 | tool | `github_list_releases(repo, limit)` | recent releases with truncated release notes |
 | tool | `github_get_pull_request(repo, number, files)` | PR detail with per-file diff stats; patch text opt-in per file |
 
-State lives in process memory, so it resets whenever the container restarts.
+The HTTP client's ETag cache and `github_repo_overview`'s 60-second TTL cache both live in
+process memory, so they reset whenever the container restarts.
 
 ## Setup
 
@@ -59,7 +55,8 @@ claude mcp add --transport http demo-mcp http://localhost:8000/mcp \
   --header "Authorization: Bearer $MCP_AUTH_TOKEN"
 ```
 
-Then in that session, `/mcp` lists the connection and the tools show up as `mcp__demo-mcp__add`, etc.
+Then in that session, `/mcp` lists the connection and the tools show up as
+`mcp__demo-mcp__github_repo_overview`, etc.
 
 To remove it later:
 

@@ -46,7 +46,8 @@ These are the ones that get broken most often. Read them before touching
 6. **Don't block the event loop.** Tool handlers are async. Use async I/O; ruff's
    `ASYNC` rules catch the common mistakes.
 7. **Errors belong in exceptions.** Raise `ValueError` with a useful message
-   (see `read_note`); the framework turns it into a proper MCP error response.
+   (see `github_get_file`, which raises for directories and submodules); the
+   framework turns it into a proper MCP error response.
 
 ## Auth
 
@@ -81,7 +82,7 @@ demo_mcp/clients/github.py GitHubClient(HttpClient) — endpoint methods only
 demo_mcp/shaping.py       field allowlists, apply_fields(), truncation helpers
 demo_mcp/models.py        pydantic result models returned by tools
 demo_mcp/tools/__init__.py register_all(mcp) — one line per tool domain
-demo_mcp/tools/demo.py    the five demo tools, note resource, summarize prompt
+demo_mcp/tools/demo.py    whoami — the only in-band auth-verification tool
 demo_mcp/tools/github.py  the seven read-only GitHub tools
 tests/test_server.py      protocol-surface contract tests
 tests/conftest.py         sets auth env before server import — required

@@ -12,10 +12,6 @@ from demo_mcp.auth import StaticTokenVerifier
 from demo_mcp.tools import demo
 
 EXPECTED_TOOLS = {
-    "add",
-    "server_time",
-    "save_note",
-    "list_notes",
     "whoami",
     "github_repo_overview",
     "github_search",
@@ -49,15 +45,22 @@ async def test_every_tool_has_a_description():
 
 
 async def test_ctx_is_not_exposed_as_a_tool_argument():
-    """Context is injected by the framework and must not leak into the schema."""
-    tool = next(t for t in await server.mcp.list_tools() if t.name == "save_note")
-    assert set(schema_of(tool).get("properties", {})) == {"title", "body"}
+    """Context is injected by the framework and must not leak into the schema.
+
+    Pins the ctx-first, single-required-argument, no-optionals case.
+    """
+    tool = next(t for t in await server.mcp.list_tools() if t.name == "github_repo_overview")
+    assert set(schema_of(tool).get("properties", {})) == {"repo"}
 
 
 async def test_ctx_first_with_optional_args_is_not_exposed_either():
-    """save_note only covers ctx-last-with-no-defaults. The GitHub tools put
-    ctx first and have optional arguments, a different code path through the
-    SDK's schema derivation — pin it separately."""
+    """Pins the many-optional-arguments path of the SDK's schema derivation —
+    a different code path than the single-required-argument case above.
+
+    Note: no tool in this codebase currently puts ctx *last* (the shape
+    save_note used to cover before it was removed); if a future tool does,
+    nothing here will catch a ctx leak into its schema.
+    """
     tool = next(t for t in await server.mcp.list_tools() if t.name == "github_search")
     assert set(schema_of(tool).get("properties", {})) == {
         "query",
@@ -88,8 +91,20 @@ async def test_repo_identifier_is_a_single_string():
         assert "name" not in properties
 
 
-async def test_prompts_are_registered():
-    assert {p.name for p in await server.mcp.list_prompts()} == {"summarize_note"}
+async def test_no_prompts_are_registered():
+    """The summarize_note prompt was removed along with the note resource;
+    no prompt should be exposed."""
+    assert {p.name for p in await server.mcp.list_prompts()} == set()
+
+
+async def test_no_note_resource_is_registered():
+    """note://{title} was a templated resource, so it was exposed via
+    list_resource_templates(), not list_resources(). Assert neither
+    accessor still advertises a note:// URI."""
+    templates = await server.mcp.list_resource_templates()
+    assert not any(t.uri_template.startswith("note://") for t in templates)
+    resources = await server.mcp.list_resources()
+    assert not any(str(r.uri).startswith("note://") for r in resources)
 
 
 # --- Auth --------------------------------------------------------------
@@ -110,26 +125,8 @@ async def test_verifier_rejects_everything_else(bad):
 # --- Tool behaviour ----------------------------------------------------
 
 
-def test_add():
-    assert demo.add(2, 3) == 5
-    assert demo.add(-1.5, 1.5) == 0
-
-
-def test_server_time_is_iso_utc():
-    from datetime import datetime
-
-    parsed = datetime.fromisoformat(demo.server_time())
-    assert parsed.tzinfo is not None
-
-
-def test_notes_roundtrip():
-    demo._NOTES.clear()
-    demo._NOTES["alpha"] = "body"
-    assert demo.list_notes() == ["alpha"]
-    assert demo.read_note("alpha") == "body"
-
-
-def test_read_note_rejects_unknown_title():
-    demo._NOTES.clear()
-    with pytest.raises(ValueError):
-        demo.read_note("nope")
+def test_whoami_reports_anonymous_outside_request_context():
+    """Outside an active MCP request, the auth middleware has not set the
+    access-token context var, so get_access_token() returns None and whoami
+    degrades gracefully rather than raising."""
+    assert demo.whoami() == "anonymous (auth disabled)"
