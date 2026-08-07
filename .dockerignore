@@ -5,3 +5,7 @@ __pycache__
 *.pyc
 README.md
 .env
+tests
+docs
+.claude
+scripts

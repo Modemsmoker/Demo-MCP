@@ -10,7 +10,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY server.py .
+COPY demo_mcp/ ./demo_mcp/
 
 RUN useradd --create-home --uid 10001 mcp
 USER mcp
@@ -20,4 +20,4 @@ EXPOSE 8000
 HEALTHCHECK --interval=15s --timeout=3s --start-period=10s --retries=3 \
     CMD python -c "import socket,os,sys; s=socket.create_connection(('127.0.0.1', int(os.environ['MCP_PORT'])), 2); s.close()" || exit 1
 
-CMD ["python", "server.py"]
+CMD ["python", "-m", "demo_mcp.server"]

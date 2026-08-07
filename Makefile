@@ -1,10 +1,26 @@
 -include .env
 export
 
-.PHONY: help build up down restart logs ps watch shell health health-unauth token env register unregister clean
+.PHONY: help install lint fmt test check build up down restart logs ps watch shell health health-unauth health-github token env register unregister clean
 
 help: ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-12s\033[0m %s\n", $$1, $$2}'
+	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-14s\033[0m %s\n", $$1, $$2}'
+
+install: ## Install runtime and dev dependencies locally
+	pip install -r requirements.txt pytest pytest-asyncio ruff
+
+lint: ## Static analysis and format check
+	ruff check .
+	ruff format --check .
+
+fmt: ## Auto-format and auto-fix
+	ruff format .
+	ruff check --fix .
+
+test: ## Run the test suite
+	MCP_AUTH_TOKEN=test-token pytest
+
+check: lint test ## Full verification gate; must pass before any commit
 
 build: ## Build the image
 	docker compose build
@@ -34,6 +50,9 @@ health: ## Smoke-check the MCP endpoint responds (with auth)
 
 health-unauth: ## Smoke-check the MCP endpoint without a token; expect 401
 	curl -isS -X POST http://localhost:8000/mcp
+
+health-github: ## Call github_repo_overview against a known public repo through the running container
+	python3 scripts/health_github.py octocat/Hello-World
 
 token: ## Generate a value for MCP_AUTH_TOKEN in .env
 	@openssl rand -hex 32

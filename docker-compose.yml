@@ -10,9 +10,10 @@ services:
       MCP_AUTH_TOKEN: ${MCP_AUTH_TOKEN:?set MCP_AUTH_TOKEN in .env}
       MCP_AUTH_DISABLED: ${MCP_AUTH_DISABLED:-0}
       MCP_PUBLIC_URL: ${MCP_PUBLIC_URL:-http://localhost:8000/mcp}
+      GH_API_TOKEN: ${GH_API_TOKEN:-}
     restart: unless-stopped
     develop:
       watch:
         - action: sync+restart
-          path: ./server.py
-          target: /app/server.py
+          path: ./demo_mcp
+          target: /app/demo_mcp

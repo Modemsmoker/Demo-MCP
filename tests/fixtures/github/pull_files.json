@@ -1,0 +1,16 @@
+[
+  {
+    "filename": "README.md",
+    "additions": 10,
+    "deletions": 2,
+    "status": "modified",
+    "patch": "@@ -1,1 +1,2 @@\n+hello\n"
+  },
+  {
+    "filename": "src/app.py",
+    "additions": 0,
+    "deletions": 0,
+    "status": "modified",
+    "patch": "@@ -1,1 +1,1 @@\n-old\n+new\n"
+  }
+]

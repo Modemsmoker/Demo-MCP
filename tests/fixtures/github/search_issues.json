@@ -1,0 +1,14 @@
+{
+  "total_count": 1,
+  "incomplete_results": false,
+  "items": [
+    {
+      "number": 42,
+      "title": "Something is broken",
+      "state": "open",
+      "user": { "login": "octocat" },
+      "updated_at": "2024-03-01T00:00:00Z",
+      "html_url": "https://github.com/octocat/Hello-World/issues/42"
+    }
+  ]
+}

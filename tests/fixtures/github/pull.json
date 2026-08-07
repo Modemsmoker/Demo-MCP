@@ -1,0 +1,13 @@
+{
+  "number": 7,
+  "title": "Add feature",
+  "state": "open",
+  "user": { "login": "octocat" },
+  "body": "PR description.",
+  "base": { "ref": "main" },
+  "head": { "ref": "feature-branch" },
+  "additions": 10,
+  "deletions": 2,
+  "changed_files": 1,
+  "html_url": "https://github.com/octocat/Hello-World/pull/7"
+}

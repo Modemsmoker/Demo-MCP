@@ -1,0 +1,12 @@
+{
+  "full_name": "octocat/Hello-World",
+  "description": "My first repository on GitHub!",
+  "stargazers_count": 2500,
+  "forks_count": 1500,
+  "language": "Python",
+  "default_branch": "main",
+  "open_issues_count": 8,
+  "pushed_at": "2024-05-01T12:00:00Z",
+  "html_url": "https://github.com/octocat/Hello-World",
+  "owner": { "login": "octocat" }
+}

@@ -1,5 +1,10 @@
 # Demo-MCP — Adding Token Authentication
 
+> This document covers only the *client → this server* auth layer
+> (`MCP_AUTH_TOKEN`). The GitHub tools add a second, unrelated layer —
+> *this server → GitHub* (`GH_API_TOKEN`) — documented in
+> [`docs/GITHUB_API.md`](GITHUB_API.md). Do not conflate the two.
+
 ## Context
 
 The server currently accepts any request that reaches `http://localhost:8000/mcp`. We want a shared secret: a token supplied to the container as an environment variable, which clients must present as `Authorization: Bearer <token>`. The `register` Make target must pass that header so a second Claude Code session can still connect.

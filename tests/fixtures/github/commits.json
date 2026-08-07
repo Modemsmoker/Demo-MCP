@@ -1,0 +1,10 @@
+[
+  {
+    "sha": "abcdef1234567890",
+    "commit": {
+      "message": "Fix bug\n\nLonger description here that should not appear in the summary.",
+      "author": { "name": "octocat", "date": "2024-02-01T00:00:00Z" }
+    },
+    "html_url": "https://github.com/octocat/Hello-World/commit/abcdef1234567890"
+  }
+]

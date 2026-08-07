@@ -1,0 +1,11 @@
+{
+  "number": 42,
+  "title": "Something is broken",
+  "state": "open",
+  "user": { "login": "octocat" },
+  "body": "Full description of the bug.",
+  "labels": [{ "name": "bug" }],
+  "assignees": [{ "login": "octocat" }],
+  "updated_at": "2024-03-01T00:00:00Z",
+  "html_url": "https://github.com/octocat/Hello-World/issues/42"
+}
