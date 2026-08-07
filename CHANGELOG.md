@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.4.0 (2026-08-07)
+
+### Features
+
+- **metrics**: Version bump
+  ([`9df9943`](https://github.com/Modemsmoker/Demo-MCP/commit/9df99435df5cce7a1520c651ad7eeda01995d716))
+
+
 ## v0.3.0 (2026-08-07)
 
 ### Features
