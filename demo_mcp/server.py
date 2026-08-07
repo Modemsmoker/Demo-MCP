@@ -8,10 +8,14 @@ import logging
 import os
 
 from mcp.server.auth.settings import AuthSettings
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from pydantic import AnyHttpUrl
+from starlette.requests import Request
+from starlette.responses import Response
 
 from demo_mcp import __version__
 from demo_mcp.auth import AUTH_DISABLED, AUTH_TOKEN, PUBLIC_URL, StaticTokenVerifier
+from demo_mcp.metrics import PrometheusMiddleware
 from demo_mcp.tools import register_all
 
 # The SDK renamed FastMCP -> MCPServer. Support both so the image builds
@@ -30,9 +34,15 @@ PORT = int(os.getenv("MCP_PORT", "8000"))
 
 logger = logging.getLogger("demo-mcp")
 
+# The `middleware=` constructor kwarg only exists on the new SDK generation
+# (MCPServer, not FastMCP); tool-call metrics are therefore only wired when
+# _NEW_API is true. The /metrics route and outbound-HTTP metrics below work
+# either way, since `custom_route()` exists on both generations.
+_middleware_kwargs = {"middleware": [PrometheusMiddleware()]} if _NEW_API else {}
+
 if AUTH_DISABLED:
     logger.warning("MCP_AUTH_DISABLED=1: server is running without authentication.")
-    mcp = MCPServer("Demo-MCP", version=__version__)
+    mcp = MCPServer("Demo-MCP", version=__version__, **_middleware_kwargs)
 else:
     mcp = MCPServer(
         "Demo-MCP",
@@ -43,9 +53,17 @@ else:
             resource_server_url=AnyHttpUrl(PUBLIC_URL),
             required_scopes=["demo"],
         ),
+        **_middleware_kwargs,
     )
 
 register_all(mcp)
+
+
+@mcp.custom_route("/metrics", methods=["GET"])
+async def metrics(_request: Request) -> Response:
+    """Expose Prometheus metrics for scraping. Bypasses auth (see custom_route
+    docs) since a Prometheus scraper has no bearer token."""
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 if __name__ == "__main__":

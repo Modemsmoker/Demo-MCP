@@ -8,9 +8,12 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
 from typing import Any, NamedTuple
 
 import httpx
+
+from demo_mcp.metrics import HTTP_REQUEST_DURATION_SECONDS, HTTP_REQUESTS_TOTAL
 
 logger = logging.getLogger("demo-mcp.clients.http")
 
@@ -79,22 +82,29 @@ class HttpClient:
         if cached is not None:
             headers["If-None-Match"] = cached[0]
 
+        host = httpx.URL(self.base_url).host
         client = get_client()
         response: httpx.Response | None = None
-        for attempt in range(self.retries + 1):
-            try:
-                response = await client.get(url, headers=headers, params=params)
-            except httpx.TransportError:
-                if attempt < self.retries:
+        start = time.monotonic()
+        try:
+            for attempt in range(self.retries + 1):
+                try:
+                    response = await client.get(url, headers=headers, params=params)
+                except httpx.TransportError:
+                    if attempt < self.retries:
+                        await asyncio.sleep(0.5 * (attempt + 1))
+                        continue
+                    HTTP_REQUESTS_TOTAL.labels(host=host, status="error").inc()
+                    raise
+                if response.status_code >= 500 and attempt < self.retries:
                     await asyncio.sleep(0.5 * (attempt + 1))
                     continue
-                raise
-            if response.status_code >= 500 and attempt < self.retries:
-                await asyncio.sleep(0.5 * (attempt + 1))
-                continue
-            break
+                break
+        finally:
+            HTTP_REQUEST_DURATION_SECONDS.labels(host=host).observe(time.monotonic() - start)
 
         assert response is not None  # the loop above always assigns or raises
+        HTTP_REQUESTS_TOTAL.labels(host=host, status=str(response.status_code)).inc()
 
         if response.status_code == 304 and cached is not None:
             return HttpResponse(304, cached[1], response.headers)

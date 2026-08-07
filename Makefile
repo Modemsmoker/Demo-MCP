@@ -1,7 +1,7 @@
 -include .env
 export
 
-.PHONY: help install lint fmt test check build up down restart logs ps watch shell health health-unauth health-github token env register unregister clean
+.PHONY: help install lint fmt test check build up down restart logs ps watch shell health health-unauth health-github metrics dashboard token env register unregister clean
 
 help: ## Show this help
 	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -53,6 +53,12 @@ health-unauth: ## Smoke-check the MCP endpoint without a token; expect 401
 
 health-github: ## Call github_repo_overview against a known public repo through the running container
 	python3 scripts/health_github.py octocat/Hello-World
+
+metrics: ## Print the current /metrics output
+	curl -sS http://localhost:8000/metrics
+
+dashboard: ## Print the Grafana dashboard URL
+	@echo "http://localhost:3000"
 
 token: ## Generate a value for MCP_AUTH_TOKEN in .env
 	@openssl rand -hex 32
