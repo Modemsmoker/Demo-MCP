@@ -1,6 +1,6 @@
 [project]
 name = "demo-mcp"
-version = "0.1.0"          # PSR owns this from here on
+version = "0.2.0"          # PSR owns this from here on
 description = "A demo Model Context Protocol server."
 requires-python = ">=3.12"
 
